@@ -7,7 +7,7 @@ from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired, URL
 import os
 
-#WTF_CSRF_SECRET_KEY=os.environ.get('CSRF_KEY')
+#WTF_CSRF_SECRET_KEY
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("CSRF_KEY")
 csrf = CSRFProtect(app)
@@ -37,6 +37,7 @@ with app.app_context():
         comments = db.Column(db.String(1000), nullable=True)
     db.create_all()
 
+
 class AddCafeForm(FlaskForm):
     name = StringField("Cafe Name", validators=[DataRequired()])
     map_url = StringField("Map URL", validators=[DataRequired(), URL()])
@@ -51,11 +52,13 @@ class AddCafeForm(FlaskForm):
     comments = StringField("Comments")
     submit = SubmitField("Add Cafe")
 
+
 @app.route("/")
 def home():
     all_cafes = Cafe.query.all()
     db.session.commit()
     return render_template("index.html", cafes=all_cafes)
+
 
 #Create Record
 @app.route("/add", methods=["GET","POST"])
@@ -89,7 +92,8 @@ def delete_cafe(cafe_id):
     db.session.commit()
     return redirect(url_for("home"))
 
-# #Edit Cafe
+
+#Edit Cafe
 @app.route("/edit/<int:cafe_id>", methods=["GET","POST"])
 def edit(cafe_id):
     cafe = Cafe.query.get(cafe_id)
@@ -109,9 +113,7 @@ def edit(cafe_id):
         cafe.coffee_price = edit_form.coffee_price.data
         db.session.commit()
         return redirect(url_for("home"))
-        # return redirect(url_for("home"))
     return render_template("add_cafe.html", form=edit_form, is_edit=True)
-    # return render_template("add_cafe.html", form=edit_form, is_edit=True)
 
 
 if __name__ == '__main__':
